@@ -1,0 +1,1 @@
+updating data in a d3 histogram 

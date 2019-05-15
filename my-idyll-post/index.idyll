@@ -21,6 +21,8 @@ idyll, run the command `idyll` inside of this directory.
 Idyll posts are designed to support interaction and
 data-driven graphics.
 
+[ReactCytoscapejs /]
+
 [var name:"color" value:"#000" /]
 
 [Force nodeColor:`color` /]
