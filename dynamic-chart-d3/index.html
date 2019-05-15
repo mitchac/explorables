@@ -40,7 +40,7 @@
   <div class="graph"></div>
   <button>Update</button>
 
-<script src="https://d3js.org/d3.v5.min.js></script>
+<script src="https://d3js.org/d3.v3.min.js"></script>
 <script type="text/javascript">
   
   var graph;
@@ -104,7 +104,7 @@
     histdata = new Array(numbins);
     
     for (var i = 0; i < numbins; i++) {
-        histdata[i] = { numFlips: 0, totalProfit: 0 };
+        histdata[i] = 0;
     }
 
     // group our data into bins, one for each year
@@ -115,8 +115,8 @@
       var bin = year - minbin;
 
       if ((bin.toString() !== "NaN") && (bin < histdata.length)) {
-        histdata[bin].numFlips += 1;
-        histdata[bin].totalProfit += d.profit;
+        //histdata[bin].numFlips += 1;
+        histdata[bin] += 1;
       }
 
     });
@@ -140,7 +140,8 @@
 
     y = d3.scale.linear()
         .domain([0, d3.max(histdata, function(d){
-                return d.numFlips;
+                //return d.numFlips;
+                return d;
               })])
         .range([height, 0]);
 
@@ -175,7 +176,8 @@
     bar.append("rect")
       .attr("x", x(binmargin))
       .attr("width", x(binsize - 2 * binmargin))
-      .attr("height", function(d) { return height - y(d.numFlips); });
+      //.attr("height", function(d) { return height - y(d.numFlips); });
+      .attr("height", function(d) { return height - y(d); });
 
     // x-axis & labels
     svg.append("g")
@@ -220,7 +222,8 @@
 
     y = d3.scale.linear()
         .domain([0, d3.max(newhistdata, function(d){
-                return d.numFlips;
+                //return d.numFlips;
+                return d;
               })])
         .range([height, 0]);
 
@@ -233,12 +236,14 @@
       .transition()
       .duration(1000)
       .attr("transform", function(d,i) {
-          return "translate(" + x2(i * binsize + minbin) + "," + y(d.numFlips) + ")"; 
+          //return "translate(" + x2(i * binsize + minbin) + "," + y(d.numFlips) + ")"; 
+          return "translate(" + x2(i * binsize + minbin) + "," + y(d) + ")";
         })
       .select('rect')
       .attr('x', x(binmargin))
       .attr("width", x(binsize - 2 * binmargin))
-      .attr("height", function(d) { return height - y(d.numFlips); });
+      //.attr("height", function(d) { return height - y(d.numFlips); });
+      .attr("height", function(d) { return height - y(d); });
 
     d3.select('.x.axis')
       .attr("transform", "translate(0," + height + ")")

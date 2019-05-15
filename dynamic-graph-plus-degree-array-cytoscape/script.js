@@ -199,16 +199,17 @@ var addNode = function() {
   allElements = cy.elements();
   var allEdges  = allElements.filter('edge');                
   var allNodes = allElements.filter('node');
-  for(var i=0; i<5; i++){
-    var printThis = []; 
-    allNodes.filter(function(i,ele){
-        printThis.push(ele.degree());
-    });
-    console.log(printThis);
-    var blah = document.getElementById("test").innerHTML = printThis;
-    //cy.remove(allEdges);
-    //cy.add(allEdges);
-  }
-
+  
+  
+ 
+  //var degreeArray = []; 
+  degreeArray = [];
+  allNodes.filter(function(i,ele){
+    degreeArray.push(ele.degree());
+  });
+  //console.log(degreeArray);
+  var blah = document.getElementById("test").innerHTML = degreeArray;
+  
   cy.layout(options);
+  //return degreeArray;
 }
