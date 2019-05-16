@@ -23,7 +23,9 @@ var xmin = minbin - 1,
 var x, x2, y, xAxis, yAxis, svg, bar;
 
 // loads data from a csv file
-function getData() {
+function getData(degreeArray) {
+
+    console.log("makeGraph "+ window.degreeArray);
 
   d3.csv('./' + csvFiles[count], function(err, d){
     if (err) {
@@ -80,11 +82,11 @@ function makeHistData(data) {
 };
 
 // creates the histogram
-function makeGraph(data,degreeArray) {
+function makeGraph(data) {
   var histdata = makeHistData(data);
 
   console.log(histdata);
-  console.log(degreeArray);
+
 
   x = d3.scale.linear()
       .domain([0, (xmax - xmin)])
@@ -209,10 +211,9 @@ function updateGraph(data) {
     .attr("transform", "translate(0,0)")
     .call(yAxis);
 
-}
-
-getData();
+}  
+    getData();
 
 d3.select('button').on('click', function(){
-  getData();
+        getData();
 });

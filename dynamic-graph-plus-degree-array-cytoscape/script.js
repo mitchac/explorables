@@ -163,6 +163,19 @@ var options = {
   useMultitasking: true
 };
 
+
+var createDegreeArray = function() {
+  allElements = cy.elements();
+  var allEdges  = allElements.filter('edge');                
+  var allNodes = allElements.filter('node');
+  window.degreeArray = [];
+allNodes.filter(function(i,ele){
+  degreeArray.push(ele.degree());
+});
+}
+
+createDegreeArray();
+
 cy.layout(options);
 
 cy.on('click', 'node', function(evt) {
@@ -196,20 +209,10 @@ var addNode = function() {
     }
   ]);
 
-  allElements = cy.elements();
-  var allEdges  = allElements.filter('edge');                
-  var allNodes = allElements.filter('node');
+  createDegreeArray();
   
-  
- 
-  //var degreeArray = []; 
-  degreeArray = [];
-  allNodes.filter(function(i,ele){
-    degreeArray.push(ele.degree());
-  });
-  //console.log(degreeArray);
   var blah = document.getElementById("test").innerHTML = degreeArray;
   
   cy.layout(options);
-  //return degreeArray;
+  
 }
