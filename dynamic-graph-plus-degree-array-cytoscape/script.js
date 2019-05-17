@@ -55,6 +55,12 @@ var cy = cytoscape({
       }
     }, {
       data: {
+        id: 'ed',
+        source: 'e',
+        target: 'd'
+      }
+    }, {
+      data: {
         id: 'dg',
         source: 'd',
         target: 'g'
@@ -164,14 +170,48 @@ var options = {
 };
 
 
+function foo(arr) {
+  var a = [], b = [], prev;
+
+  arr.sort();
+  for ( var i = 0; i < arr.length; i++ ) {
+      if ( arr[i] !== prev ) {
+          a.push(arr[i]);
+          b.push(1);
+      } else {
+          b[b.length-1]++;
+      }
+      prev = arr[i];
+  }
+
+  var maxDegree = Math.max.apply(null, a);
+  var degreeFreq = [];
+  var biter = 0;
+
+  for ( var i = 0; i <= maxDegree; i++ ) {
+    
+    if (a.includes(i)){
+      
+      degreeFreq.push(b[biter]);
+      biter = biter + 1;
+    } else {
+      degreeFreq.push(0);
+    }
+
+  }
+
+  return degreeFreq;
+}
+
 var createDegreeArray = function() {
   allElements = cy.elements();
   var allEdges  = allElements.filter('edge');                
   var allNodes = allElements.filter('node');
   window.degreeArray = [];
-allNodes.filter(function(i,ele){
-  degreeArray.push(ele.degree());
-});
+  allNodes.filter(function(i,ele){
+    degreeArray.push(ele.degree());
+  });
+  window.nodeDegreeDist = foo(degreeArray)
 }
 
 createDegreeArray();
