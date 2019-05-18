@@ -17,7 +17,7 @@ var xmin = minbin - 1,
 var x, x2, y, xAxis, yAxis, svg, bar;
 
 // loads data from a csv file
-function getData(degreeArray) {
+function getData() {
 
     if (graph) {
       // if the graph exists then update its data
@@ -33,26 +33,37 @@ function getData(degreeArray) {
 function makeGraph() {
   //var histdata = makeHistData(data);
   var histdata = window.nodeDegreeDist;
+  console.log(histdata.length)
+
+  var binsize = 1,
+    minbin = 0,
+    maxbin = histdata.length,
+    numbins = (maxbin - minbin) / binsize;
+
+  var xmin = minbin - 1,
+      xmax = maxbin + 1;
 
   x = d3.scale.linear()
-  //x = d3.scale.ordinal()
       .domain([0, (xmax - xmin)])
-     // .range([0, width+]);
-     .range([0, width]);
+      .rangeRound([0, width]);
 
   x2 = d3.scale.linear()
   //x2 = d3.scale.ordinal()
       .domain([xmin, xmax])
-      .range([0, width]);
+      //.range([0, width]);
+      //.range([0, width]);
+      .rangeRound([0,width]);
 
   y = d3.scale.linear()
   //y = d3.scale.ordinal()
-      .domain([0, d3.max(histdata, function(d){
-              return d;
-            })])
+      //.domain([0, d3.max(histdata, function(d){
+      //        return d;
+      //      })])
+      .domain([0, d3.max(histdata)])
       .range([height, 0]);
 
   xAxis = d3.svg.axis()
+      //.scale(x2)
       .scale(x2)
       .tickFormat(function(d) {
         return d.toString();
@@ -72,12 +83,14 @@ function makeGraph() {
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
   bar = svg.selectAll(".bar")
+      .call(log,".bar")
       .data(histdata)
       .enter()
       .append("g")
       .attr("class", "bar")
       .attr("transform", function(d,i) {
-          return "translate(" + x2(i * binsize + minbin) + "," + y(d) + ")"; 
+          //return "translate(" + x2(i * binsize + minbin) + "," + y(d) + ")"; 
+          return "translate(" + x2((i * binsize)-0.5) + "," + y(d) + ")"; 
         });
   
   bar.append("rect")
@@ -114,6 +127,10 @@ function makeGraph() {
 
 }
 
+function log(sel,msg) {
+  console.log(msg,sel);
+}
+
 // updates the data in the graph
 function updateGraph() {    
 
@@ -132,12 +149,13 @@ function updateGraph() {
       .scale(y)
       .ticks(8)
       .orient("left");
-
+  
   bar.data(newhistdata)
     .transition()
     .duration(1000)
     .attr("transform", function(d,i) { 
-        return "translate(" + x2(i * binsize + minbin) + "," + y(d) + ")";
+        //return "translate(" + x2(i * binsize + minbin) + "," + y(d) + ")";
+        return "translate(" + x2((i * binsize)-0.5) + "," + y(d) + ")";
       })
     .select('rect')
     .attr('x', x(binmargin))
@@ -145,6 +163,7 @@ function updateGraph() {
     .attr("height", function(d) { return height - y(d); });
 
   d3.select('.x.axis')
+    .call(log,".x.axis")
     .attr("transform", "translate(0," + height + ")")
     .call(xAxis);
 
