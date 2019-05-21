@@ -25,7 +25,7 @@ function getData() {
     if (graph) {
       // if the graph exists then update its data
       //updateGraph();  
-      d3.select(".graph").selectAll("*").remove();
+      d3.select(".d3chart").selectAll("*").remove();
       makeGraph();
     } else {
       // otherwise create the graph
@@ -46,34 +46,20 @@ function makeGraph() {
 
   var xmin = minbin,
       xmax = maxbin;
-
-  x = d3.scale.linear()
+  
+  x = d3.scaleLinear()
       .domain([0, (xmax - xmin)])
       .rangeRound([0, width]);
-
-  x2 = d3.scale.linear()
+  
+  x2 = d3.scaleLinear()
       .domain([xmin, xmax])
       .rangeRound([0,width]);
-
-  y = d3.scale.linear()
+    
+  y = d3.scaleLinear()
       .domain([0, d3.max(data)])
       .range([height, 0]);
 
-  xAxis = d3.svg.axis()
-      .scale(x2)
-      .tickFormat(function(d) {
-        if (d>=0) {
-          return d.toString();
-        }
-      })
-      .orient("bottom");
-
-  yAxis = d3.svg.axis()
-      .scale(y)
-      .ticks(datamax + 1)
-      .orient("left");
-
-  svg = d3.select(".graph").append("svg")
+  svg = d3.select(".d3chart").append("svg")
       .attr("position", "relative")
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom)
@@ -96,17 +82,42 @@ function makeGraph() {
     .attr("width", x(binsize - 2 * binmargin))
     .attr("height", function(d) { return height - y(d); });
 
+  
   // x-axis & labels
-  svg.append("g")
-    .attr("class", "x axis")
-    .attr("transform", "translate(0," + height + ")")
-    .call(xAxis);
+  function customXAxis(g) {
+    g.call(xAxis);
+    g.selectAll('.tick')
+    .filter(function(d, i) {
+      return i === 0 || i === maxbin+1;
+    })
+    .remove()
+  }
 
-  // y-axis & labels
+  var xAxis = d3.axisBottom(x2)
+    .ticks(maxbin);
+
   svg.append("g")
-    .attr("class", "y axis")
+    .attr("class", "x-axis")
+    .attr("transform", "translate(0," + height + ")")
+    .call(customXAxis);
+    
+  // y-axis & labels
+  function customYAxis(g) {
+    g.call(yAxis);
+    g.selectAll('.tick')
+      .filter(function(d, i) {
+        return i === 0;
+      })
+      .remove()
+  }
+
+  var yAxis = d3.axisLeft(y)
+    .ticks(datamax);
+
+  svg.append("g")
+    .attr("class", "y-axis")
     .attr("transform", "translate(0,0)")
-    .call(yAxis);
+    .call(customYAxis);
 
   /*      
 

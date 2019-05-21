@@ -229,7 +229,6 @@ var destroy = function() {
 var addNode = function() {
   var elem_id = document.getElementById('node_id').value;
   var from_node = document.getElementById('from_node').value;
-  var blah = document.getElementById("test").innerHTML = "test";
 
   if (elem_id.length === 0 || from_node.length === 0) {
     alert("please fill both input fields");
@@ -251,7 +250,7 @@ var addNode = function() {
 
   createDegreeArray();
   
-  var blah = document.getElementById("test").innerHTML = degreeArray;
+  //var blah = document.getElementById("test").innerHTML = degreeArray;
   
   cy.layout(options);
   
