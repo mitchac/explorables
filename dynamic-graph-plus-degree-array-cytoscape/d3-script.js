@@ -22,6 +22,7 @@ function log(sel,msg) {
 
 // loads data from a csv file
 function getData() {
+    console.log('enter get data')
     if (graph) {
       // if the graph exists then update its data
       //updateGraph();  
@@ -37,6 +38,7 @@ function getData() {
 function makeGraph() {
   
   var data = window.nodeDegreeDist;
+  console.log(data)
   var datamax = d3.max(data)
   
   var binsize = 1,
@@ -178,7 +180,8 @@ function updateGraph() {
     .call(yAxis);
 
 }  
-    getData();
+    
+  getData();
 
 d3.select('button').on('click', function(){
         getData();
