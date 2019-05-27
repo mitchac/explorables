@@ -20,7 +20,7 @@
   <h3>Dynamic graph degree distribution demo</h3>
   <p>The chart at right shows the number of nodes in the graph below with a given degree (ie number of edges). Add an edge to the graph and the chart at right will dynamically update to reflect the new node degree distrubution for the graph. </p>
 
-  <button id="addBtn" onclick="addNode()">Add Node</button>
+  <button id="addBtn" onclick="addNodeAndLink()">Add Node</button>
   <input type="text" id="node_id" placeholder="enter new node name">
   from
   <input type="text" id="from_node" placeholder="enter node id">
@@ -28,9 +28,11 @@
     <div id="cy" width = "50%" height = "100%" style="float:left"></div>
     <div class="d3chart" id="svg" width = "50%" height = "100%" style="float:right"></div>
   </div>
-  <script src="script.js"></script>
+  <script src=https://cdnjs.cloudflare.com/ajax/libs/mathjs/3.3.0/math.min.js></script>
   <script src="https://d3js.org/d3.v5.min.js"></script>
+  <script src="script.js"></script>
   <script src="d3-script.js"></script>
+  
 
 </body>
 

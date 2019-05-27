@@ -106,7 +106,7 @@ var cy = cytoscape({
     }, {
       selector: 'edge',
       style: {
-        'width': 2,
+        'width': 3,
         'line-color': '#1100cc',
         'target-arrow-color': '#1100cc',
         'target-arrow-shape': 'none'
@@ -245,7 +245,7 @@ var addLink = function(from_node_id,to_node_id) {
 
 var addOneNodeAndLink = function() {
   var i = cy.nodes().length;
-  var j = getRandomInt(startNodes+1);
+  var j = getRandomInt(i);
   addNode(i);
   addLink(i,j);
   createDegreeArray();
@@ -281,6 +281,10 @@ var addNodeAndLink = function() {
 //   createDegreeArray();  
 //   cy.layout(options);
 // }
+
+function getRandomInt(max) {
+  return Math.floor(Math.random() * Math.floor(max));
+}
 
 var initGraphData = function(startNodes) {
   for ( var i = 0; i <= startNodes; i++ ) {  
