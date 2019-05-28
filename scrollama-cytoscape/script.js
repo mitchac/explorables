@@ -86,30 +86,31 @@ var cy = cytoscape({
     {
       selector: 'node',
       style: {
-        'shape': 'roundrectangle',
-        'background-color': '#ccc',
-        'border-color': '#888',
-        'shape ': 'roundrectangle',
-        'width': 'label',
-        'height': 'label',
-        'padding-right': '3',
-        'padding-left': '3',
-        'padding-top': '3',
-        'padding-bottom': '3',
-        'text-wrap': 'wrap',
-        'text-valign': 'center',
-        'text-halign': 'center',
-        'text-max-width': '100px',
-        'label': 'data(id)',
-        'font-size': '10'
+        //'shape': 'roundrectangle',
+        //'background-color': '#ccc',
+        //'border-color': '#888',
+        //'shape ': 'roundrectangle',
+        //'width': 'label',
+        //'height': 'label',
+        //'padding-right': '3',
+        //'padding-left': '3',
+        //'padding-top': '3',
+        //'padding-bottom': '3',
+        //'text-wrap': 'wrap',
+        //'text-valign': 'center',
+        //'text-halign': 'center',
+        //'text-max-width': '100px',
+        //'label': 'data(id)',
+        //'font-size': '10'
       },
     }, {
       selector: 'edge',
       style: {
         'width': 3,
         'line-color': '#1100cc',
-        'target-arrow-color': '#1100cc',
-        'target-arrow-shape': 'none'
+        //'target-arrow-color': '#1100cc',
+        //'target-arrow-shape': 'none',
+        'curve-style': 'bezier'
       }
     }
   ],
@@ -120,6 +121,7 @@ var cy = cytoscape({
 });
 
 var options = {
+  pixelRatio: 1,
   name: 'cose',
   // Called on `layoutready`
   ready: function() {},
@@ -132,7 +134,8 @@ var options = {
   animationThreshold: 250,
   // Number of iterations between consecutive screen positions update
   // (0 -> only updated on the end)
-  refresh: 20,
+  refresh: 50,
+  //refresh: 20,
   // Whether to fit the network view after when done
   fit: true,
   // Padding on fit
@@ -169,6 +172,7 @@ var options = {
   minTemp: 1.0,
   // Whether to use threading to speed up the layout
   useMultitasking: true
+
 };
 
 
@@ -198,16 +202,12 @@ function createDegreeDist(arr) {
       biter = biter + 1;
     } else {
       degreeFreq.push(0);
-      console.log(degreeFreq)
     }
   }
   
   var N = maxDegree+1; 
   var intList = Array.apply(null, {length: N}).map(Number.call, Number);
-  console.log(intList);
-  console.log(degreeFreq);
   var totalDegree = math.dot(degreeFreq,intList);
-  console.log(totalDegree);
   
   return degreeFreq;
 }
@@ -243,14 +243,47 @@ var addLink = function(from_node_id,to_node_id) {
 ]);
 }
 
-var addOneNodeAndLink = function() {
-  var i = cy.nodes().length;
-  var j = getRandomInt(i);
-  addNode(i);
-  addLink(i,j);
+var updateChartLayoutGraph = function() {
   createDegreeArray();
   cy.layout(options);
 }
+
+var addNextNodes = function(numNodes) {
+  var i = cy.nodes().length;
+  for (let index = i; index < i+numNodes; index++) {
+  addNode(index);
+  }
+  updateChartLayoutGraph();
+}
+
+var addLinks = function(numLinks) {
+  console.log('enteraddlinks');
+  var initLength = cy.nodes().length;
+  for (let index = initLength; index < initLength+numLinks; index++) {
+    var newLength = cy.nodes().length;
+    var i = getRandomInt(newLength);
+    var j = getRandomInt(newLength);
+    if (i !== j) {
+      addLink(i,j);
+      console.log(i,j)
+    }
+  }
+  updateChartLayoutGraph();
+}
+
+var addOneNodeAndLink = function() {
+  var i = cy.nodes().length;
+  //for (let index = 0; index < i/10; index++) {
+    var i = cy.nodes().length;
+    var j = getRandomInt(i);
+    addNode(i);
+    addLink(i,j);
+  //}
+  createDegreeArray();
+  cy.layout(options);
+}
+
+
 
 var addNodeAndLink = function() {
   var elem_id = document.getElementById('node_id').value;
@@ -295,17 +328,17 @@ var initGraphData = function(startNodes) {
     return Math.floor(Math.random() * Math.floor(max));
   }
 
-  for ( var z = 0; z <= 20; z++ ) { 
+  for ( var z = 0; z <= 400; z++ ) { 
     var i = getRandomInt(startNodes+1);
     var j = getRandomInt(startNodes+1);
+    if (i < j) {
       if (j !== i) {
         addLink(j,i);
-        console.log(i,j)
       } 
     }
-
+  }
   createDegreeArray();  
   cy.layout(options);
 }
 
-initGraphData(5);
+//initGraphData(5);

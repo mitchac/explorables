@@ -7,7 +7,6 @@
 	<title>Scrollama Demo: Fixed CSS</title>
 	<meta name="description" content="Scrollama Demo: Fixed CSS">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/2.5.1/cytoscape.min.js"></script>
     <style>
 		/* default / demo page */
 		* {
@@ -91,7 +90,17 @@
 		.chart {
 			position: absolute;
 			right: 1rem;
-			top: 50%;
+			top: 75%;
+			-moz-transform: translateY(-50%);
+			-webkit-transform: translateY(-50%);
+			transform: translateY(-50%);
+			background-color: #ddd;
+			border: 1px solid #000;
+		}
+        .d3chart {
+			position: absolute;
+			right: 1rem;
+			top: 25%;
 			-moz-transform: translateY(-50%);
 			-webkit-transform: translateY(-50%);
 			transform: translateY(-50%);
@@ -130,13 +139,13 @@
 			font-size: 1.5rem;
 		}
 		#cy {
-      height: 80%;
-      width: 50%;
-      float: left;
-      position: absolute;
-      left: 100;
-      top: 100;
-    }
+            height: 80%;
+            width: 50%;
+            float: left;
+            position: absolute;
+            left: 100;
+            top: 100;
+        }
 	</style>
 
 </head>
@@ -153,33 +162,87 @@
 	</section>
 	<section id='scroll'>
 		<div class='scroll__graphic'>
-			<!-- <div class='chart'> -->
 			<div class='chart' id="cy">
 				<p>0</p>
-			</div>
+            </div>
+            <div class='d3chart'id="svg">
+                
+            </div>
 		</div>
 		<div class='scroll__text'>
-			<div class='step' data-step='1'>
-				<p>STEP 1</p>
+			<div class='step'>
+				<p>Part 1</p>
+				<p>A century ago novelist E M Forster implored us to ‘only connect’. 
+					But nowadays it seems that’s all we ever do. 
+					But what if amongst all that clicking and swiping and liking there was some deeper structure or pattern. 
+					Patterns of connectedness have long fascinated mathematicians just like the rest of us. 
+					The realm of mathematics which deals with connectedness is graph theory. 
+					But can this arcane realm teach us anything about the real world?
+					Can it teach us how to become famous? 
+					</p>
 			</div>
-			<div class='step' data-step='2'>
-				<p>STEP 2</p>
+			<div class='step'>
+				<p>A few preliminaries</p>
 			</div>
-			<div class='step' data-step='3'>
-				<p>STEP 3</p>
+			<div class='step'>
+				<p>This is a node</p>
 			</div>
-			<div class='step' data-step='4'>
-				<p>STEP 4</p>
+			<div class='step'>
+				<p>A node in real life could represent person in a social network, a species in a food web or any kind of entity or thing. </p>
+			</div>
+			<div class='step'>
+				<p>This is another node</p>
+			</div>
+			<div class='step'>
+				<p>And this is an edge</p>
+			</div>
+			<div class='step'>
+				<p>In real life, edges are used to represent relationships between people or things. For example an edge between two people in a social network might represent that the two people have liked or followed one another.</p>
+			</div>
+			<div class='step'>
+				<p>By adding more and more nodes and edges to this graph we can generate a larger and more complex graph.</p>
+			</div>
+			<div class='step'>
+				<p>But by so doing it also becomes more difficult to intuit the structure or patterns of connectedness of the graph from a simple visualisation.</p>
+			</div>
+			<div class='step'>
+				<p>Part 2</p>
+				<p>Perhaps we could start by analysing some attribute of the nodes or edges or the graph as a whole to generate some insights into the structure of the graph.</p>
+			</div>
+			<div class='step'>
+				<p>One such measure which mathematicians focus on is the degree of a node. This is simply a count of the number of edges that each node has. </p>
+			</div>
+			<div class='step'>
+				<p>This node has [x] edges</p>
+			</div>
+			<div class='step'>
+				<p>While this node has [y] edges</p>
+			</div>
+			<div class='step'>
+				<p>The degree of a node seems intuitively useful as a measure of the relative ‘importance’ of particular nodes in a graph when we consider that nodes with very high degrees or edge counts in real life social networks might be prominent and powerful individuals.</p>
+			</div>
+			<div class='step'>
+				<p>But if we record the degree of each node in the graph we’ll just end up with a big string of numbers. Which is hardly more intuitive than our original graph visualisation. </p>
+			</div>
+			<div class='step'>
+				<p>How about we first figure out how many nodes have zero edges, one edge and so on</p>
+			</div>
+			<div class='step'>
+				<p>And then convert this into a chart</p>
+			</div>
+			<div class='step'>
+				<p>This chart gives us a view of the graph which is complementary to the raw visualisation of the nodes and edges. Further if we consider links to be the ‘currency’ of a graph, it gives us an insight into how equitably such edges are shared out between the different nodes</p>
 			</div>
 		</div>
 	</section>
     <section id='outro'></section>
     <!--<div class='debug'></div>-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/2.5.1/cytoscape.min.js"></script>
     <script src=https://cdnjs.cloudflare.com/ajax/libs/mathjs/3.3.0/math.min.js></script>
     <script src="script.js"></script>
     <script src='https://d3js.org/d3.v4.min.js'></script>
 	<script src='https://unpkg.com/intersection-observer'></script>
-	<script src='https://cdnjs.cloudflare.com/ajax/libs/scrollama/1.4.1/scrollama.min.js'></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/scrollama/1.4.1/scrollama.min.js'></script>
 	<script>
 		// using d3 for convenience
 		var container = d3.select('#scroll');
@@ -210,14 +273,39 @@
 		}
 		// scrollama event handlers
 		function handleStepEnter(response) {
+			switch (response.index) {
+				case 2: 
+					addNextNodes(1);
+					break;
+				case 4: 
+					addNextNodes(1);
+					break;
+				case 5: 
+					addLink(0,1);
+					break;
+				case 7: 
+					addNextNodes(5);
+					addLinks(10);
+					break;
+				case 8: 
+					addNextNodes(15);
+					addLinks(35);
+					break;
+			}
+			console.log(response.index);
 			// response = { element, direction, index }
-			// add color to current step only
-			step.classed('is-active', function (d, i) {
-				return i === response.index;
-			})
-			// update graphic based on step
-            chart.select('p').text(response.index + 1)
-            addOneNodeAndLink();
+			// // add color to current step only
+			// if (response.index === 1) {
+			// 	console.log(response);
+			// }
+			// step.classed('is-active', function (d, i) {
+			// 	console.log(response.index);
+			// 	return i === response.index;
+			// })
+			// // update graphic based on step
+            // chart.select('p').text(response.index + 1)
+            // addOneNodeAndLink();
+            getData();
 		}
 		function handleContainerEnter(response) {
 			// response = { direction }
@@ -256,6 +344,7 @@
 		init();
     </script>
     <script src="script.js"></script>
+    <script src="d3-script.js"></script>
 </body>
 
 </html>
