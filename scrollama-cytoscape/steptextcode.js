@@ -33,14 +33,14 @@ let steptextcode = [
         }
     },
     {
-        text: "By adding more and more nodes and edges to this graph we can generate a larger and more complex graph"
+        text: "By adding more and more nodes and edges to this graph we can generate a larger and more complex graph",
         code: function(){
             addNextNodes(5);
             addLinks(10);
         }
     },
     {
-        text: "But by so doing it also becomes more difficult to intuit the structure or patterns of connectedness of the graph from a simple visualisation"
+        text: "But by so doing it also becomes more difficult to intuit the structure or patterns of connectedness of the graph from a simple visualisation",
         code: function(){
             addNextNodes(5);
             addLinks(10);

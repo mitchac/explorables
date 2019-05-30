@@ -7,7 +7,7 @@
 	<title>Scrollama Demo: Fixed CSS</title>
 	<meta name="description" content="Scrollama Demo: Fixed CSS">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-    <style>
+	<style>
 		/* default / demo page */
 		* {
 			box-sizing: border-box;
@@ -163,63 +163,25 @@
 	<section id='scroll'>
 		<div class='scroll__graphic'>
 			<div class='chart' id="cy">
-				<p>0</p>
             </div>
             <div class='d3chart'id="svg">
                 
             </div>
 		</div>
-		<div class='scroll__text'>
-			<div class='step'>
-				<p>Part 2</p>
-				<p>Perhaps we could start by analysing some attribute of the nodes or edges or the graph as a whole to generate some insights into the structure of the graph.</p>
-			</div>
-			<div class='step'>
-				<p>One such measure which mathematicians focus on is the degree of a node. This is simply a count of the number of edges that each node has. </p>
-			</div>
-			<div class='step'>
-				<p>This node has [x] edges</p>
-			</div>
-			<div class='step'>
-				<p>While this node has [y] edges</p>
-			</div>
-			<div class='step'>
-				<p>The degree of a node seems intuitively useful as a measure of the relative ‘importance’ of particular nodes in a graph when we consider that nodes with very high degrees or edge counts in real life social networks might be prominent and powerful individuals.</p>
-			</div>
-			<div class='step'>
-				<p>But if we record the degree of each node in the graph we’ll just end up with a big string of numbers. Which is hardly more intuitive than our original graph visualisation. </p>
-			</div>
-			<div class='step'>
-				<p>How about we first figure out how many nodes have zero edges, one edge and so on</p>
-			</div>
-			<div class='step'>
-				<p>And then convert this into a chart</p>
-			</div>
-			<div class='step'>
-				<p>This chart gives us a view of the graph which is complementary to the raw visualisation of the nodes and edges. Further if we consider links to be the ‘currency’ of a graph, it gives us an insight into how equitably such edges are shared out between the different nodes</p>
-			</div>
-		</div>
+		<div class='scroll__text'></div>
 	</section>
     <section id='outro'></section>
-	<!--<div class='debug'></div>-->
+    <!--<div class='debug'></div>-->
+	
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/2.5.1/cytoscape.min.js"></script>
-	<script src="cy-script.js"></script>
-	<script src=https://cdnjs.cloudflare.com/ajax/libs/mathjs/3.3.0/math.min.js></script>
-    
-	<!--
-	<script src="steptextcode.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/2.5.1/cytoscape.min.js"></script>
-    <script src=https://cdnjs.cloudflare.com/ajax/libs/mathjs/3.3.0/math.min.js></script>
-    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/3.3.0/math.min.js"></script>
     <script src='https://d3js.org/d3.v4.min.js'></script>
 	<script src='https://unpkg.com/intersection-observer'></script>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/scrollama/1.4.1/scrollama.min.js'></script>
+	<script src="steptextcode.js"></script>
 	<script src="scrollama-script.js"></script>
-    
-	<script src="d3-script.js"></script>
 	<script src="cy-script.js"></script>
-	-->
-
+    <script src="d3-script.js"></script>
 </body>
 
 </html>

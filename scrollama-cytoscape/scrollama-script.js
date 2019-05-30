@@ -33,43 +33,6 @@ function handleStepEnter(response) {
         console.log('hascode');
         stepContent.code();
     }
-    // switch (response.index) {
-    //     ca
-    //         steptextcode[response.index].code()
-    //         break;
-    //     case 1:
-    //         break;
-    //     case 2: 
-    //         addNextNodes(1);
-    //         break;
-    //     case 4: 
-    //         addNextNodes(1);
-    //         break;
-    //     case 5: 
-    //         addLink(0,1);
-    //         break;
-    //     case 7: 
-    //         addNextNodes(5);
-    //         addLinks(10);
-    //         break;
-    //     case 8: 
-    //         addNextNodes(15);
-    //         addLinks(35);
-    //         break;
-    // }
-    console.log(response.index);
-    // response = { element, direction, index }
-    // // add color to current step only
-    // if (response.index === 1) {
-    // 	console.log(response);
-    // }
-    // step.classed('is-active', function (d, i) {
-    // 	console.log(response.index);
-    // 	return i === response.index;
-    // })
-    // // update graphic based on step
-    // chart.select('p').text(response.index + 1)
-    // addOneNodeAndLink();
     getData();
 }
 function handleContainerEnter(response) {
@@ -77,7 +40,7 @@ function handleContainerEnter(response) {
     // sticky the graphic (old school)
     graphic.classed('is-fixed', true);
     graphic.classed('is-bottom', false);
-    
+
 }
 function handleContainerExit(response) {
     // response = { direction }
@@ -86,29 +49,22 @@ function handleContainerExit(response) {
     graphic.classed('is-bottom', response.direction === 'down');
 }
 
-function genStepCode(response) {
-    // response = { direction }
-    // un-sticky the graphic, and pin to top/bottom of container
-    graphic.classed('is-fixed', false);
-    graphic.classed('is-bottom', response.direction === 'down');
-}
-
 //document.getElementById('myItemList').appendChild(ul);
-st = document.getElementsByClassName("scroll__text")[0]; 
+st = document.getElementsByClassName("scroll__text")[0];
 //var div = document.createElement('div');
-    //st.appendChild(div);
+//st.appendChild(div);
 
 
-// steptextcode.forEach(function (item,index) {
-//     console.log(item);
-//     console.log(index);
-//     var div = document.createElement('div');
-//     div.className = "step";
-//     st.appendChild(div);
-//     var p = document.createElement('p');
-//     div.appendChild(p);
-//     p.innerHTML += item.text;
-// });
+steptextcode.forEach(function (item, index) {
+    console.log(item);
+    console.log(index);
+    var div = document.createElement('div');
+    div.className = "step";
+    st.appendChild(div);
+    var p = document.createElement('p');
+    div.appendChild(p);
+    p.innerHTML += item.text;
+});
 
 
 function init() {
@@ -132,5 +88,4 @@ function init() {
     window.addEventListener('resize', handleResize);
 }
 // kick things off
-console.log(steptextcode);
 init();
