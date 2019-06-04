@@ -157,7 +157,7 @@ let steptextcode = [
             addNode(1);
             addLink(0, 1);
             var i;
-            for (i = 0; i < 200; i++) {
+            for (i = 0; i < 20; i++) {
                 addPrefAttachNodes();
             }
             cy.layout(options);

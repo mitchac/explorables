@@ -227,7 +227,8 @@ var createDegreeArray = function () {
   allNodes.filter(function (i, ele) {
     degreeArray.push(ele.degree());
   });
-  window.nodeDegreeDist = createDegreeDist(degreeArray)
+  const degreeArrayCopy = [...degreeArray];
+  window.nodeDegreeDist = createDegreeDist(degreeArrayCopy)
 }
 
 var addNode = function (nodeid) {
@@ -248,11 +249,13 @@ var addLink = function (from_node_id, to_node_id) {
   }]);
 }
 
-var addPrefAttachNodes = function (numNodesToAdd) {  
-  //addNode(i);
-  //addLink(i, j);
+//var addPrefAttachNodes = function (numNodesToAdd) {  
+var addPrefAttachNodes = function () {
+  // used this algo for pref select nodes
+  // https://stackoverflow.com/questions/16489449/select-element-from-array-with-probability-proportional-to-its-value
   createDegreeArray();
   //console.log('prefattachfunc');
+  //console.log('degreeArray');
   //console.log(degreeArray);
   var cumArray = degreeArray.reduce(function(r, a) {
     if (r.length > 0)
@@ -261,11 +264,14 @@ var addPrefAttachNodes = function (numNodesToAdd) {
     return r;
   }, []);
   
-  console.log(cumArray);
+  //console.log('cumArray');
+  //console.log(cumArray);
   var cumArrayTot = cumArray[cumArray.length-1];
-  console.log(cumArrayTot);
-  var rndCumArrayTot = getRandomInt(cumArrayTot+1);
-  console.log(rndCumArrayTot);
+  //console.log('cumArrayTot');
+  //console.log(cumArrayTot);
+  var rndCumArrayTot = getRandomInt(cumArrayTot);
+  //console.log('rndCumArrayTot');
+  //console.log(rndCumArrayTot);
 
   Array.prototype.bisect = function (val) {
     var idx;
@@ -281,12 +287,14 @@ var addPrefAttachNodes = function (numNodesToAdd) {
   };
 
   var selectedNodeIndex = cumArray.bisect(rndCumArrayTot);
-  console.log(selectedNodeIndex);
   var nextNode = cy.nodes().length;
-  if (nextNode !== selectedNodeIndex) {
+  //console.log('nextNode');
+  //console.log(nextNode);
+  //console.log('selectedNodeIndex');
+  //console.log(selectedNodeIndex);
+  
     addNode(nextNode);
     addLink(nextNode, selectedNodeIndex);
-  }
   //cy.layout(options);
 }
 
