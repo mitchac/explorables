@@ -59,7 +59,7 @@ let steptextcode = [
         text: "The degree of a node seems intuitively useful as a measure of the relative ‘importance’ of particular nodes in a graph when we consider that nodes with very high degrees or edge counts in real life social networks might be prominent and powerful individuals",
     },
     {
-        text: "Next we could calculate the degree for each node in the chart and create a chart which shows how many nodes have zero edges, one edge and so on",
+        text: "Next we could calculate the degree for each node in the graph and create a chart which shows how many nodes have zero edges, one edge and so on",
         code: function () {
             //insert boilerplate code to eg zoom in on the axes of a chart and back out 
             // insert code to communicate that bars in the node degree distribution chart are derived from the graph. Eg mouseover bar for degree = 2 in chart, then highlight the nodes in the graph which have this number of edges and then display text saying "3 nodes have 2 edges or degree 2"
@@ -109,15 +109,56 @@ let steptextcode = [
         text: "We can see that the distribution of edges across nodes becomes closer and closer to a bell curve or normal distribution",
     },
     {
-        text: "The normal distribution is, for example, a reasonably accurate approximation for the distribution of heights in a group of people where the bulk of heights are clustered around the average height. But is it a reasonable approximation to the sort of distribution of edges across nodes that we would expect to see, for example, in a real life social network? ",
+        text: "The normal distribution is, for example, a reasonably accurate approximation for the distribution of heights in a group of people where the bulk of heights are reasonably tightly clustered around the average height. But is it a reasonable approximation to the sort of distribution of edges across nodes that we would expect to see, for example, in a real life social network? ",
         code: function () {
             //Show Facebook graph with hubs or famous youtuber? 
         }
     },
     {
+        comment: "how display image? hide graph svg? or hide graph and chart and display somehow?",
+        comment: "Can't find facebook, twitter graph visualisations",
+        comment: "facebook graphs likely to show clustering rather than hubs cf internet graph",
         text: "It’s hard to tell for certain just by looking at the graph but it seems that the social network diagram instead has a small number of nodes with very high degree or number of edges - known as hubs - while there are many more nodes which each have very few edges",
+        text: "While the average twitter user has around 800 followers, popular artists like Katy Perry and Justin Beiber can have over 100 million followers.",
     },
     {
         text: "So it seems adding edges to nodes at random doesn’t seem to generate the sort of graphs or social networks that we see in the real world",
     },
+    {
+        text: "Could there be some other simple method for generating graphs more similar to real world social networks? And what might we learn from this about how to become famous?",
+    },
+    {
+        text: "The Matthew Effect: Or the rich get richer and the poor get poorer",
+    },
+    {
+        text: "This is an idea with a deep intellectual pedigree. The phrase was coined by sociologists Robert Merton and Harriet Zuckerman in 1968 and inspired by the biblical Gospel of Matthew. And it was more recently popularised by Malcolm Gladwell. ",
+    },
+    {
+        text: "The idea of accumulated advantage begetting further advantage is also a simple and intuitive one. But is it simply an elegant idea or might it have deep explanatory power to explain the distribution of power and advantage that we see in the real world? And moreover, what application could it have in the realm of graph theory and network science?",
+    },
+    {
+        text: "In 2002, Albert-László Barabási and Réka Albert published an algorithm for generating a graphs. But their approach deviated critically from that of Paul Erdős and Alfréd Rényi's random graph model. In particular, the likelihood of adding each successive link to the graph wasn't random but was, consistent with the Matthew Effect, biased towards those nodes that already had outsize numbers of links.",
+    },
+    {
+        text: "Let's switch to the Barabási Albert algorithm for our graph simulation at the right.",
+    },
+    {
+        text: "Let's add a few nodes and links.",
+    },
+    {
+        text: "And a few more.",
+    },
+    {
+        text: "And a few more still.",
+    },
+    {
+        text: "Is there anything about the graph structure that seems different to the random graph model?",
+    },
+    {
+        text: "The obvious feature is the emergence of hub nodes. Ie nodes which have high numbers of links",
+    },
+    {
+        text: "The chart of node degrees also looks different. In particular, the chart now looks less and less like a normal distribution and instead has lots of nodes with low degree and a few nodes - the hubs- with high degree",
+    },
+
 ];
