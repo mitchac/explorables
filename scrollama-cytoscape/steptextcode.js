@@ -129,6 +129,13 @@ let steptextcode = [
     },
     {
         text: "The Matthew Effect: Or the rich get richer and the poor get poorer",
+        code: function () {
+            cy.elements().remove();
+            nodeDegreeDist = [];
+            //updateChartLayoutGraph();
+            //degreeArray = [];
+            //degreeFreq = [];
+        }
     },
     {
         text: "This is an idea with a deep intellectual pedigree. The phrase was coined by sociologists Robert Merton and Harriet Zuckerman in 1968 and inspired by the biblical Gospel of Matthew. And it was more recently popularised by Malcolm Gladwell. ",
@@ -140,10 +147,21 @@ let steptextcode = [
         text: "In 2002, Albert-László Barabási and Réka Albert published an algorithm for generating a graphs. But their approach deviated critically from that of Paul Erdős and Alfréd Rényi's random graph model. In particular, the likelihood of adding each successive link to the graph wasn't random but was, consistent with the Matthew Effect, biased towards those nodes that already had outsize numbers of links.",
     },
     {
+        comment:"Barabasi ALbert model is directed graph !!!",
         text: "Let's switch to the Barabási Albert algorithm for our graph simulation at the right.",
     },
     {
         text: "Let's add a few nodes and links.",
+        code: function () {
+            addNode(0);
+            addNode(1);
+            addLink(0, 1);
+            var i;
+            for (i = 0; i < 200; i++) {
+                addPrefAttachNodes();
+            }
+            cy.layout(options);
+        }
     },
     {
         text: "And a few more.",

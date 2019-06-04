@@ -190,6 +190,7 @@ function createDegreeDist(arr) {
     }
     prev = arr[i];
   }
+  //console.log(b);
 
   var maxDegree = Math.max.apply(null, a);
   var degreeFreq = [];
@@ -245,6 +246,48 @@ var addLink = function (from_node_id, to_node_id) {
       target: to_node_id + ''
     }
   }]);
+}
+
+var addPrefAttachNodes = function (numNodesToAdd) {  
+  //addNode(i);
+  //addLink(i, j);
+  createDegreeArray();
+  //console.log('prefattachfunc');
+  //console.log(degreeArray);
+  var cumArray = degreeArray.reduce(function(r, a) {
+    if (r.length > 0)
+      a += r[r.length - 1];
+    r.push(a);
+    return r;
+  }, []);
+  
+  console.log(cumArray);
+  var cumArrayTot = cumArray[cumArray.length-1];
+  console.log(cumArrayTot);
+  var rndCumArrayTot = getRandomInt(cumArrayTot+1);
+  console.log(rndCumArrayTot);
+
+  Array.prototype.bisect = function (val) {
+    var idx;
+    if (this.length === 0) {
+        return 0;
+    }
+    for (idx=0; idx < this.length; idx++) {
+        if (val < this[idx]) {
+            return idx;
+        }
+    }
+    return idx;
+  };
+
+  var selectedNodeIndex = cumArray.bisect(rndCumArrayTot);
+  console.log(selectedNodeIndex);
+  var nextNode = cy.nodes().length;
+  if (nextNode !== selectedNodeIndex) {
+    addNode(nextNode);
+    addLink(nextNode, selectedNodeIndex);
+  }
+  //cy.layout(options);
 }
 
 var updateChartLayoutGraph = function () {
