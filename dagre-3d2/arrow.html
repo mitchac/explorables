@@ -1,0 +1,147 @@
+<!doctype html>
+
+<meta charset="utf-8">
+<title>Dagre D3 Demo: Arrows</title>
+
+<link rel="stylesheet" href="demo.css">
+<script src="https://d3js.org/d3.v4.min.js" charset="utf-8"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dagre-d3/0.6.3/dagre-d3.min.js"></script>
+
+
+<style id="css">
+body {
+  font: 300 14px 'Helvetica Neue', Helvetica;
+}
+
+.node rect,
+.node circle,
+.node ellipse {
+  stroke: #333;
+  fill: #fff;
+  stroke-width: 1px;
+}
+
+.edgePath path {
+  stroke: #333;
+  fill: #333;
+  stroke-width: 1.5px;
+}
+</style>
+
+<h1>Entity Relationship Diagram for "Thousands of microbial genomes shed light on interconnected biogeochemical processes in an aquifer system</h1>
+
+<svg width=1500 height=900><g/></svg>
+
+<section>
+<p>
+</section>
+
+<script id="js">
+// Create a new directed graph
+var g = new dagreD3.graphlib.Graph({ multigraph: true }).setGraph({});
+
+//g.setDefaultEdgeLabel(function() {
+//return {};
+//});
+//g.setNode("a",{});
+//g.setNode("b",{});
+//g.setEdge("a", "b", {label:"edge1-label"}, "edge1");
+
+g.setNode("research study",{});
+g.setNode("sample",{});
+
+g.setNode("ecosystem",{});
+g.setNode("terrestrial ecosystem",{});
+g.setNode("terrestrial subsurface",{});
+g.setNode("aquifer",{});
+g.setNode("microorganism",{});
+g.setNode("microbial community",{});
+g.setNode("gene",{});
+g.setNode("chemical reaction",{});
+g.setNode("chemical pathway",{});
+
+
+//g.setEdge("a", "b", "edge1-label", "edge1");
+
+g.setEdge("microorganism", "gene", {
+  label: "has many"
+},"edge1");
+g.setEdge("gene", "chemical reaction", {
+  label: "catalyses"
+});
+g.setEdge("chemical pathway", "chemical reaction", {
+  label: "has many"
+});
+g.setEdge("ecosystem", "terrestrial ecosystem", {
+  label: "includes"
+});
+g.setEdge("terrestrial ecosystem", "terrestrial subsurface", {
+  label: "includes"
+});
+g.setEdge("terrestrial subsurface", "aquifer", {
+  label: "includes"
+});
+g.setEdge("research study", "sample", {
+  label: "collect many"
+});
+g.setEdge("sample", "microorganism", {
+  label: "of"
+});
+g.setEdge("sample", "aquifer", {
+  label: "from"
+});
+g.setEdge("microbial community", "microorganism", {
+  label: "has many"
+});
+
+
+
+g.setEdge("microorganism", "gene", {
+  label: "..has all the..",
+  labelStyle: "font-style: italic",
+});
+g.setEdge("gene", "chemical reaction", {
+  label: "to catalyse all the reactions...",
+  labelStyle: "font-weight: bold",
+});
+g.setEdge("chemical reaction", "chemical pathway", {
+  label: "comprising an entire chemical pathway...",
+  labelStyle: "font-weight: bold"
+});
+
+
+
+g.setEdge("microorganism", "microbial community", {
+  label: "..comprising ..",
+  labelStyle: "text-decoration: underline"
+});
+g.setEdge("microbial community", "gene", {
+  label: "..collectively have all the genes..",
+  labelStyle: "text-decoration: underline"
+});
+
+
+
+var svg = d3.select("svg"),
+    inner = svg.select("g");
+
+// Set up zoom support
+var zoom = d3.zoom().on("zoom", function() {
+      inner.attr("transform", d3.event.transform);
+    });
+svg.call(zoom);
+
+// Create the renderer
+var render = new dagreD3.render();
+
+// Run the renderer. This is what draws the final graph.
+render(inner, g);
+
+// Center the graph
+var initialScale = 1.5;
+svg.call(zoom.transform, d3.zoomIdentity.translate((svg.attr("width") - g.graph().width * initialScale) / 2, 20).scale(initialScale));
+
+svg.attr('height', g.graph().height * initialScale + 40);
+</script>
+
+<script src="demo.js"></script>
