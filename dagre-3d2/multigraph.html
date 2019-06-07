@@ -38,6 +38,21 @@ body {
 
 <script id="js">
 
+
+let steptextcode = [
+    {
+        text: "A tale of nodes and edges",
+    },
+    {
+        text: "This is a node",
+        code: function () {
+            addNextNodes(1);
+        }
+    }
+  ];
+
+
+
 let g = new dagreD3.graphlib.Graph({ multigraph: true });
 g.setGraph({});
 g.setDefaultEdgeLabel(function() {

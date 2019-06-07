@@ -3,7 +3,6 @@
 <meta charset="utf-8">
 <title>Dagre D3 Demo: Arrows</title>
 
-<link rel="stylesheet" href="demo.css">
 <script src="https://d3js.org/d3.v4.min.js" charset="utf-8"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dagre-d3/0.6.3/dagre-d3.min.js"></script>
 
@@ -21,11 +20,22 @@ body {
   stroke-width: 1px;
 }
 
+.node.hidden rect,
+.node.hidden circle,
+.node.hidden ellipse {
+  opacity: 0.4;
+}
+
 .edgePath path {
   stroke: #333;
   fill: #333;
   stroke-width: 1.5px;
 }
+
+.edgePath.hidden path {
+  opacity: 0.3;
+}
+
 </style>
 
 <h1>Entity Relationship Diagram for "Thousands of microbial genomes shed light on interconnected biogeochemical processes in an aquifer system</h1>
@@ -37,6 +47,11 @@ body {
 </section>
 
 <script id="js">
+
+
+
+
+
 // Create a new directed graph
 var g = new dagreD3.graphlib.Graph({ multigraph: true }).setGraph({});
 
@@ -57,6 +72,7 @@ g.setNode("aquifer",{});
 g.setNode("microorganism",{});
 g.setNode("microbial community",{});
 g.setNode("gene",{});
+g.setNode("protein",{});
 g.setNode("chemical reaction",{});
 g.setNode("chemical pathway",{});
 
@@ -65,10 +81,13 @@ g.setNode("chemical pathway",{});
 
 g.setEdge("microorganism", "gene", {
   label: "has many"
-},"edge1");
-g.setEdge("gene", "chemical reaction", {
-  label: "catalyses"
-});
+},"one");
+g.setEdge("gene", "protein", {
+  label: "encode"
+},"one");
+g.setEdge("protein", "chemical reaction", {
+  label: "catalyse"
+},"one");
 g.setEdge("chemical pathway", "chemical reaction", {
   label: "has many"
 });
@@ -96,29 +115,91 @@ g.setEdge("microbial community", "microorganism", {
 
 
 
-g.setEdge("microorganism", "gene", {
-  label: "..has all the..",
-  labelStyle: "font-style: italic",
-});
+
 g.setEdge("gene", "chemical reaction", {
   label: "to catalyse all the reactions...",
-  labelStyle: "font-weight: bold",
+  //labelStyle: "font-weight: bold",
 });
 g.setEdge("chemical reaction", "chemical pathway", {
-  label: "comprising an entire chemical pathway...",
-  labelStyle: "font-weight: bold"
-});
+  label: "..comprising an entire chemical pathway..",
+  //labelStyle: "font-weight: bold"
+},"one");
 
 
 
 g.setEdge("microorganism", "microbial community", {
   label: "..comprising ..",
-  labelStyle: "text-decoration: underline"
-});
+  //labelStyle: "text-decoration: underline"
+},"one");
 g.setEdge("microbial community", "gene", {
   label: "..collectively have all the genes..",
-  labelStyle: "text-decoration: underline"
-});
+  //labelStyle: "text-decoration: underline"
+},"one");
+
+g.setEdge("microorganism", "gene", {
+  label: "..has all the..",
+  class: "hidden",
+},"two");
+
+
+
+let steps = [
+    {
+        source: "microorganism",
+        target: "gene",
+        label: "..has all the..",
+        name: "two"
+    },
+    {
+        source: "gene",
+        target: "protein",
+        label: "encode",
+        name: "one"
+    },
+    {
+        source: "protein",
+        target: "chemical reaction",
+        label: "catalyse",
+        name: "one"
+    },
+    {
+        source: "chemical reaction",
+        target: "chemical pathway",
+        label: "..comprising an entire chemical pathway..",
+        name: "one"
+    },
+    {
+        source: "microorganism",
+        target: "microbial community",
+        label: "..comprising ..",
+        name: "one"
+    },
+    {
+        source: "microbial community",
+        target: "gene",
+        label: "..collectively have all the genes..",
+        name: "one"
+    },
+    {
+        source: "gene",
+        target: "protein",
+        label: "encode",
+        name: "one"
+    },
+    {
+        source: "protein",
+        target: "chemical reaction",
+        label: "catalyse",
+        name: "one"
+    },
+    {
+        source: "chemical reaction",
+        target: "chemical pathway",
+        label: "..comprising an entire chemical pathway..",
+        name: "one"
+    }
+];
+
 
 
 
@@ -138,10 +219,65 @@ var render = new dagreD3.render();
 render(inner, g);
 
 // Center the graph
-var initialScale = 1.5;
+var initialScale = 1;
 svg.call(zoom.transform, d3.zoomIdentity.translate((svg.attr("width") - g.graph().width * initialScale) / 2, 20).scale(initialScale));
 
 svg.attr('height', g.graph().height * initialScale + 40);
+
+stepCount = 0;
+
+window.addEventListener("click", function(params) {
+  console.log("click");
+  console.log(stepCount);
+  //lastStep = steps[stepcount-1];
+  
+
+  //console.log(lastStep);
+
+  if (stepCount >= 1) {
+    lastStep = steps[stepCount-1];
+    console.log("laststepif");
+    g.setEdge(lastStep.source, lastStep.target, {
+     label: lastStep.label,
+  },lastStep.name);
+  }
+
+
+
+  //console.log(steps[stepcount].source);
+  
+  // removeNode works i think?
+  //g.removeNode("gene");
+
+  // remove multigraph node works too..
+  //g.removeEdge("microorganism", "gene","two");
+  
+  
+  //g.removeEdge(steps[stepcount].source, steps[stepcount].target, {
+  //},"one");
+
+  currStep = steps[stepCount];
+  
+  g.setEdge(currStep.source, currStep.target, {
+     label: currStep.label,
+     class: "highlight",
+     labelStyle: "font-weight: bold"
+  },currStep.name);
+
+
+render(inner, g);
+
+stepCount++;
+
+console.log(stepCount);
+
+});
+
+// var inter = setInterval(function() {
+// //                updateData();
+//   console.log("setinterval firing")
+//         }, 5000); 
+
 </script>
 
 <script src="demo.js"></script>
