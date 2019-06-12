@@ -23,7 +23,7 @@ body {
 .node.hidden rect,
 .node.hidden circle,
 .node.hidden ellipse {
-  opacity: 0.4;
+  opacity: 0.15;
 }
 
 .edgePath path {
@@ -33,14 +33,20 @@ body {
 }
 
 .edgePath.hidden path {
-  opacity: 0.3;
+  opacity: 0.15;
+}
+
+label {
+  margin-top: 1em;
+  display: block;
+  opacity: 0.15;
 }
 
 </style>
 
 <h1>Entity Relationship Diagram for "Thousands of microbial genomes shed light on interconnected biogeochemical processes in an aquifer system</h1>
 
-<svg width=1500 height=900><g/></svg>
+<svg width=1500 height=1200><g/></svg>
 
 <section>
 <p>
@@ -48,23 +54,13 @@ body {
 
 <script id="js">
 
-
-
-
-
 // Create a new directed graph
 var g = new dagreD3.graphlib.Graph({ multigraph: true }).setGraph({});
 
-//g.setDefaultEdgeLabel(function() {
-//return {};
-//});
-//g.setNode("a",{});
-//g.setNode("b",{});
-//g.setEdge("a", "b", {label:"edge1-label"}, "edge1");
 
+// core nodes
 g.setNode("research study",{});
 g.setNode("sample",{});
-
 g.setNode("ecosystem",{});
 g.setNode("terrestrial ecosystem",{});
 g.setNode("terrestrial subsurface",{});
@@ -76,9 +72,7 @@ g.setNode("protein",{});
 g.setNode("chemical reaction",{});
 g.setNode("chemical pathway",{});
 
-
-//g.setEdge("a", "b", "edge1-label", "edge1");
-
+// core edges
 g.setEdge("microorganism", "gene", {
   label: "has many"
 },"one");
@@ -113,34 +107,31 @@ g.setEdge("microbial community", "microorganism", {
   label: "has many"
 });
 
-
-
+// hypothesis 1 edges
 
 g.setEdge("gene", "chemical reaction", {
   label: "to catalyse all the reactions...",
-  //labelStyle: "font-weight: bold",
+  class: "hidden",
 });
 g.setEdge("chemical reaction", "chemical pathway", {
-  label: "..comprising an entire chemical pathway..",
-  //labelStyle: "font-weight: bold"
+  label: "..comprising an\n entire chemical pathway..",
+  class: "hidden",
 },"one");
 
-
-
+// hypothesis 2 edges
 g.setEdge("microorganism", "microbial community", {
   label: "..comprising ..",
-  //labelStyle: "text-decoration: underline"
+  class: "hidden",
 },"one");
 g.setEdge("microbial community", "gene", {
   label: "..collectively have all the genes..",
-  //labelStyle: "text-decoration: underline"
+  class: "hidden",
 },"one");
 
 g.setEdge("microorganism", "gene", {
   label: "..has all the..",
   class: "hidden",
 },"two");
-
 
 
 let steps = [
@@ -165,7 +156,7 @@ let steps = [
     {
         source: "chemical reaction",
         target: "chemical pathway",
-        label: "..comprising an entire chemical pathway..",
+        label: "..comprising an\n entire chemical pathway..",
         name: "one"
     },
     {
@@ -195,7 +186,7 @@ let steps = [
     {
         source: "chemical reaction",
         target: "chemical pathway",
-        label: "..comprising an entire chemical pathway..",
+        label: "..comprising an\n entire chemical pathway..",
         name: "one"
     }
 ];
@@ -219,7 +210,7 @@ var render = new dagreD3.render();
 render(inner, g);
 
 // Center the graph
-var initialScale = 1;
+var initialScale = 0.9;
 svg.call(zoom.transform, d3.zoomIdentity.translate((svg.attr("width") - g.graph().width * initialScale) / 2, 20).scale(initialScale));
 
 svg.attr('height', g.graph().height * initialScale + 40);
@@ -227,34 +218,15 @@ svg.attr('height', g.graph().height * initialScale + 40);
 stepCount = 0;
 
 window.addEventListener("click", function(params) {
-  console.log("click");
-  console.log(stepCount);
-  //lastStep = steps[stepcount-1];
-  
-
-  //console.log(lastStep);
 
   if (stepCount >= 1) {
     lastStep = steps[stepCount-1];
     console.log("laststepif");
     g.setEdge(lastStep.source, lastStep.target, {
      label: lastStep.label,
+     class: "hidden",
   },lastStep.name);
   }
-
-
-
-  //console.log(steps[stepcount].source);
-  
-  // removeNode works i think?
-  //g.removeNode("gene");
-
-  // remove multigraph node works too..
-  //g.removeEdge("microorganism", "gene","two");
-  
-  
-  //g.removeEdge(steps[stepcount].source, steps[stepcount].target, {
-  //},"one");
 
   currStep = steps[stepCount];
   
@@ -264,19 +236,11 @@ window.addEventListener("click", function(params) {
      labelStyle: "font-weight: bold"
   },currStep.name);
 
-
 render(inner, g);
 
 stepCount++;
 
-console.log(stepCount);
-
 });
-
-// var inter = setInterval(function() {
-// //                updateData();
-//   console.log("setinterval firing")
-//         }, 5000); 
 
 </script>
 

@@ -1,0 +1,71 @@
+<head>
+  <style>
+    body {
+      font-family: Sans-serif;
+      margin: 0;
+    }
+  </style>
+
+  <script src="//unpkg.com/d3-dsv"></script>
+  <script src="//unpkg.com/d3-fetch"></script>
+
+  <script src="//unpkg.com/3d-force-graph@1"></script>
+  <script src="//unpkg.com/d3-octree"></script>
+  <script src="//unpkg.com/d3-force-3d"></script>
+</head>
+
+<body>
+  <div id="3d-graph"></div>
+  <script>
+
+    const LEVELS_GAP = 120;
+    const HEIGHT_OFFSET = 400;
+    const NODE_REL_SIZE = 1;
+
+    d3.csv('d3-dependencies.csv').then(data => {
+      const nodes = [], links = [];
+      data.forEach(({ size, path }) => {
+        const levels = path.split('/'),
+          level = levels.length - 1,
+          module = level > 0 ? levels[1] : null,
+          leaf = levels.pop(),
+          parent = levels.join('/');
+
+        const node = {
+          path,
+          leaf,
+          module,
+          size: +size || 20,
+          fy: HEIGHT_OFFSET -level * LEVELS_GAP
+        };
+
+        nodes.push(node);
+
+        if (parent) {
+          links.push({ source: parent, target: path, targetNode: node });
+        }
+      });
+
+      const elem = document.getElementById('3d-graph');
+
+      ForceGraph3D()
+        .nodeRelSize(NODE_REL_SIZE)
+        .nodeId('path')
+        .nodeVal('size')
+        .nodeLabel('path')
+        .nodeAutoColorBy('module')
+        .nodeOpacity(0.9)
+        .linkColor(d => d.targetNode.color)
+        .onNodeHover(node => elem.style.cursor = node ? 'pointer' : null)
+        .onNodeClick(node => {
+          const levels = node.path.split('/');
+          if (levels.length > 2) { levels.splice(2, 0, 'tree/master/src'); } // Format github path
+          window.open(`https://github.com/${levels.join('/')}`, '_blank')
+        })
+        .d3Force('collision', d3.forceCollide(node => Math.cbrt(node.size) * NODE_REL_SIZE))
+        .graphData({ nodes: nodes, links: links })
+        (elem);
+    });
+
+  </script>
+</body>
