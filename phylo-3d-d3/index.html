@@ -42,7 +42,8 @@
     <!-- Copyright 2016 Mike Bostock https://d3js.org -->
     <script src="https://d3js.org/d3.v4.min.js"></script>
     <script>
-        d3.text("life2.txt", function (error, life) {
+        //d3.text("life2.txt", function (error, life) {
+            d3.text("animals.txt", function (error, life) {
             if (error) throw error;
 
             var root = d3.hierarchy(parseNewick(life), function (d) {
@@ -74,7 +75,7 @@
                 linksList.push({
                     source: source,
                     target: target,
-                    length: length
+                    length: length,
                 });
                 items.add(source);
                 items.add(target);
@@ -126,14 +127,20 @@
 
             const Graph = ForceGraph3D()
                 (document.getElementById('3d-graph'))
+                .nodeLabel(node => node.id)
                 .graphData(gData);
 
-            function updateLinkDistance() {
-                linkForce.distance(link => link.color ? settings.redDistance : settings.greenDistance);
-                graph.numDimensions(3); // Re-heat simulation
-            }
+            const linkForce = Graph
+                .d3Force('link')
+                //.distance(link => link.color ? settings.redDistance : settings.greenDistance);
+                .distance(link => link.length*2);
 
-            updateLinkDistance();
+            // function updateLinkDistance() {
+            //     linkForce.distance(link => link.color ? settings.redDistance : settings.greenDistance);
+            //     graph.numDimensions(3); // Re-heat simulation
+            // }
+
+            //updateLinkDistance();
 
         });
     </script>
