@@ -131,10 +131,16 @@
             .sort(function (a, b) {
                 return (a.value - b.value) || d3.ascending(a.data.length, b.data.length);
             });
+        
+        linksList = [];
+        root.links().forEach(function (value) {
+            var source = value.source.data.name;
+            var target = value.target.data.name;
+            var length = value.target.data.length;
+            linksList.push({source: source, target: target, length: length});
+        });
+        console.log(linksList);
 
-        console.log(parseNewick(life));
-
-        console.log(root.links());
 
         cluster(root);
 

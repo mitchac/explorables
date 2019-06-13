@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<!-- Copyright 2011 Jason Davies https://github.com/jasondavies/newick.js -->
+
+
+
+<head>
+    <style>
+        body {
+            margin: 0;
+        }
+    </style>
+    <script src="//unpkg.com/3d-force-graph"></script>
+
+    <script>
+        function parseNewick(a) {
+            for (var e = [], r = {}, s = a.split(/\s*(;|\(|\)|,|:)\s*/), t = 0; t < s.length; t++) {
+                var n = s[t];
+                switch (n) {
+                    case "(":
+                        var c = {};
+                        r.branchset = [c], e.push(r), r = c;
+                        break;
+                    case ",":
+                        var c = {};
+                        e[e.length - 1].branchset.push(c), r = c;
+                        break;
+                    case ")":
+                        r = e.pop();
+                        break;
+                    case ":":
+                        break;
+                    default:
+                        var h = s[t - 1];
+                        ")" == h || "(" == h || "," == h ? r.name = n : ":" == h && (r.length = parseFloat(n))
+                }
+            }
+            return r
+        }
+    </script>
+
+    <!-- Copyright 2016 Mike Bostock https://d3js.org -->
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <script>
+        d3.text("life2.txt", function (error, life) {
+            if (error) throw error;
+
+            var root = d3.hierarchy(parseNewick(life), function (d) {
+                    return d.branchset;
+                })
+                .sum(function (d) {
+                    return d.branchset ? 0 : 1;
+                })
+                .sort(function (a, b) {
+                    return (a.value - b.value) || d3.ascending(a.data.length, b.data.length);
+                });
+
+            //console.log(root.nodes());
+
+            items = new Set();
+
+            // add(item) {
+            //     if (this.items.indexOf(item) === -1) {
+            //         this.items.push(item);
+            //         console.log(this.items);
+            //     }
+            // }
+
+            linksList = [];
+            root.links().forEach(function (value) {
+                var source = value.source.data.name;
+                var target = value.target.data.name;
+                var length = value.target.data.length;
+                linksList.push({
+                    source: source,
+                    target: target,
+                    length: length
+                });
+                items.add(source);
+                items.add(target);
+                //console.log(items.entries()[0]);
+                //console.log(items.size);
+                console.log([...items][0]);
+                //add(source);
+
+            });
+
+            console.log(linksList[0].source);
+
+
+            // Random tree
+            //const N = 3;
+            const M = linksList.length;
+            const N = items.size;
+            //items.size
+            const gData = {
+                nodes: [...Array(N).keys()].map(i => ({
+                    //id: i
+                    //id: "cat"+i
+                    id: [...items][i]
+                })),
+                // links: [...Array(M).keys()]
+                //     .filter(id => id)
+                //     .map(id => ({
+                //         //source: "cat" + id,
+                //         source: linksList[1].source,
+                //         target: "cat" + Math.round(Math.random() * (id - 1))
+                //     }))
+                links: [...Array(M).keys()].map(j => ({
+                    //id: i
+                    //id: "cat"+i
+                    source: linksList[j].source,
+                    target: linksList[j].target,
+                    length: linksList[j].length
+                })),
+                // links: [...Array(M).keys()]
+                //     .filter(id => id)
+                //     .map(id => ({
+                //         source: "cat" + id,
+                //         source: linksList[1].source,
+                //         target: "cat" + Math.round(Math.random() * (id - 1))
+                //     }))
+            };
+
+            console.log(gData);
+
+            const Graph = ForceGraph3D()
+                (document.getElementById('3d-graph'))
+                .graphData(gData);
+
+            function updateLinkDistance() {
+                linkForce.distance(link => link.color ? settings.redDistance : settings.greenDistance);
+                graph.numDimensions(3); // Re-heat simulation
+            }
+
+            updateLinkDistance();
+
+        });
+    </script>
+
+</head>
+
+<body>
+    <div id="3d-graph"></div>
+</body>
