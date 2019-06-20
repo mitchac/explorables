@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<!-- Copyright 2011 Jason Davies https://github.com/jasondavies/newick.js -->
+
+<head>
+    <style>
+        body {
+            margin: 0;
+        }
+    </style>
+    <script src="//unpkg.com/3d-force-graph"></script>
+
+    <script>
+        function parseNewick(a) {
+            for (var e = [], r = {}, s = a.split(/\s*(;|\(|\)|,|:)\s*/), t = 0; t < s.length; t++) {
+                var n = s[t];
+                switch (n) {
+                    case "(":
+                        var c = {};
+                        r.branchset = [c], e.push(r), r = c;
+                        break;
+                    case ",":
+                        var c = {};
+                        e[e.length - 1].branchset.push(c), r = c;
+                        break;
+                    case ")":
+                        r = e.pop();
+                        break;
+                    case ":":
+                        break;
+                    default:
+                        function getRandomInt(max) {
+                            return Math.floor(Math.random() * Math.floor(max));
+                        }
+                        hash = getRandomInt(1000);
+                        var h = s[t - 1];
+                        ")" == h || "(" == h || "," == h ? r.name = n + hash : ":" == h && (r.length = parseFloat(n))
+                }
+            }
+            return r
+        }
+    </script>
+
+    <!-- Copyright 2016 Mike Bostock https://d3js.org -->
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <script src="//unpkg.com/3d-force-graph"></script>
+    <script>
+        //d3.text("life.txt", function (error, life) {
+        d3.text("tree-of-life.txt", function (error, life) {
+            //d3.text("https://gist.githubusercontent.com/mbostock/c034d66572fd6bd6815a/raw/98778537e42f5605d9eddae5fba3329d969b813c/life.txt", function (error, life) {
+            if (error) throw error;
+
+            var root = d3.hierarchy(parseNewick(life), function (d) {
+                    return d.branchset;
+                })
+                .sum(function (d) {
+                    return d.branchset ? 0 : 1;
+                })
+                .sort(function (a, b) {
+                    return (a.value - b.value) || d3.ascending(a.data.length, b.data.length);
+                });
+
+            items = new Set();
+
+            linksList = [];
+            root.links().forEach(function (value) {
+                var source = value.source.data.name;
+                var target = value.target.data.name;
+                var length = value.target.data.length;
+                linksList.push({
+                    source: source,
+                    target: target,
+                    length: length,
+                });
+                items.add(source);
+                items.add(target);
+            });
+
+            //const N = 3;
+            const M = linksList.length;
+            const N = items.size;
+            //items.size
+            const gData = {
+                nodes: [...Array(N).keys()].map(i => ({
+
+                    id: [...items][i]
+                })),
+                links: [...Array(M).keys()].map(j => ({
+                    source: linksList[j].source,
+                    target: linksList[j].target,
+                    length: linksList[j].length
+                })),
+            };
+
+            // console.log(gData.nodes[0]);
+            // gData.nodes[0].fx = 0;
+            // gData.nodes[0].fy = 0;
+            // gData.nodes[0].fz = 0;
+
+            const Graph = ForceGraph3D()
+                (document.getElementById('3d-graph'))
+                .nodeLabel(node => node.id.substring(0, node.id.length - 3))
+                .graphData(gData)
+                .cameraPosition({ x: 500, y: -300, z: 3300 })
+                //.cameraPosition({ z: 3000})
+
+            const linkForce = Graph
+                .d3AlphaDecay(0.01)
+                .d3VelocityDecay(0.01)
+                .d3Force('link')
+                .distance(link => link.length * 800)
+                .iterations(100)
+                .strength(1)
+        });
+    </script>
+
+</head>
+
+<body>
+    <div id="3d-graph"></div>
+</body>
