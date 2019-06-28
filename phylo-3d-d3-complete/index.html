@@ -8,9 +8,8 @@
             margin: 0;
         }
     </style>
-    <script src="//unpkg.com/3d-force-graph"></script>
-
     <script>
+        // parse Newick format phylogeny source file
         function parseNewick(a) {
             for (var e = [], r = {}, s = a.split(/\s*(;|\(|\)|,|:)\s*/), t = 0; t < s.length; t++) {
                 var n = s[t];
@@ -29,53 +28,37 @@
                     case ":":
                         break;
                     default:
-                        function getRandomInt(max) {
-                            return Math.floor(Math.random() * Math.floor(max));
-                        }
-                        hash = getRandomInt(1000);
                         var h = s[t - 1];
-                        ")" == h || "(" == h || "," == h ? r.name = n + hash : ":" == h && (r.length = parseFloat(n))
+                        // append t to r.name in line below to deal with internal nodes of tree
+                        // with duplicate names. strip t from name before displaying in code below.
+                        ")" == h || "(" == h || "," == h ? r.name = n + t : ":" == h && (r.length = parseFloat(n))
                 }
             }
             return r
         }
     </script>
-
-    <!-- Copyright 2016 Mike Bostock https://d3js.org -->
     <script src="https://d3js.org/d3.v4.min.js"></script>
     <script src="//unpkg.com/3d-force-graph"></script>
     <script>
-        //d3.text("life.txt", function (error, life) {
+        // import source file
+        // url for original source file is..
+        // https://gist.githubusercontent.com/mbostock/c034d66572fd6bd6815a/raw/98778537e42f5605d9eddae5fba3329d969b813c/life.txt
+        // here importing local copy with slight modifications. 
         d3.text("tree-of-life.txt", function (error, life) {
-            //d3.text("https://gist.githubusercontent.com/mbostock/c034d66572fd6bd6815a/raw/98778537e42f5605d9eddae5fba3329d969b813c/life.txt", function (error, life) {
             if (error) throw error;
 
-            //console.log(parseNewick(life));
-
-            // var rootNoSort = d3.hierarchy(parseNewick(life), function (d) {
-            //         //console.log(d.branchset);
-            //         return d.branchset;
-            //     })
-            //     .sum(function (d) {
-            //         //console.log(d.branchset ? 0 : 1);
-            //         return d.branchset ? 0 : 1;
-            //     })
-
-            //console.log(rootNoSort);
-
+            // parse imported data and convert to d3 hierarchy 
             var root = d3.hierarchy(parseNewick(life), function (d) {
-                    //console.log(d.branchset);
                     return d.branchset;
                 })
                 .sum(function (d) {
-                    //console.log(d.branchset ? 0 : 1);
                     return d.branchset ? 0 : 1;
                 })
                 .sort(function (a, b) {
                     return (a.value - b.value) || d3.ascending(a.data.length, b.data.length);
                 });
 
-
+            // color descendent nodes of each of three main domains of life. Ie Bacteria, Eukarya and Archaea. 
             root.children[1].each(function (d) {
                 d.myColor = "#003f5c";
             });
@@ -88,17 +71,13 @@
                 d.myColor = "#58508d";
             });
 
-            console.log(root.links());
-
-            uniqueArray = a => [...new Set(a.map(o => JSON.stringify(o)))].map(s => JSON.parse(s))
-
+            // convert d3 hierarchy data structure to list of links and list of nodes
             linksList = [];
             nodesList = [];
 
             root.links().forEach(function (value) {
                 var source = value.source.data.name;
-                //var defSourceColor = value.source.myColor;
-                var sourceColor = (value.source.myColor ? value.source.myColor : "#707070") ;
+                var sourceColor = (value.source.myColor ? value.source.myColor : "#707070");
                 var target = value.target.data.name;
                 var targetColor = value.target.myColor;
                 var length = value.target.data.length;
@@ -122,62 +101,37 @@
 
             });
 
-
-            console.log(linksList);
-
-
+            //remove duplicate nodes from nodes list
+            uniqueArray = a => [...new Set(a.map(o => JSON.stringify(o)))].map(s => JSON.parse(s))
             uniqueNodes = uniqueArray(nodesList);
 
-            items = uniqueNodes;
-
-            const M = linksList.length;
-            const N = items.length;
-
+            // prep data for pass into graph
             const gData = {
-                nodes: [...Array(N).keys()].map(i => ({
-
-                    id: [...items][i].id,
-                    myColor: [...items][i].myColor
-                    //group: Math.ceil(Math.random() * 3),
-                    //color: "#f00"
-                })),
-                links: [...Array(M).keys()].map(j => ({
-                    source: linksList[j].source,
-                    target: linksList[j].target,
-                    length: linksList[j].length,
-                    myColor: linksList[j].myColor
-                })),
+                nodes: uniqueNodes,
+                links: linksList
             };
 
-
-
-            console.log(gData);
-            // gData.nodes[0].fx = 0;
-            // gData.nodes[0].fy = 0;
-            // gData.nodes[0].fz = 0;
-
+            // create graph and set attributes
             const Graph = ForceGraph3D()
                 (document.getElementById('3d-graph'))
                 .nodeLabel(d =>
-                    `<span style="color: black">${d.id.replace(/\d+/g, '').replace(/_/g, ' ')}</span>`)
+                    `<span style="color: #505050; background-color: #FFFFFF">${d.id.replace(/\d+/g, '').replace(/_/g, ' ')}</span>`
+                )
                 .nodeColor(node => node.myColor)
                 .linkColor(link => link.myColor)
                 .linkOpacity(0.5)
-                .linkWidth(2.5)
-                .nodeRelSize(12)
+                .linkWidth(1.5)
+                .nodeRelSize(5)
                 .graphData(gData)
+                .backgroundColor('#DCDCDC')
                 .cameraPosition({
                     x: 500,
                     y: -300,
                     z: 3300
-                })
-            
-            var blah = gData.links[0].source
-            console.log(gData.links[0].source);
-            console.log(gData.nodes[blah]);
+                }
+                )
 
-            //.cameraPosition({ z: 3000})
-
+            // set forces on graph 
             const linkForce = Graph
                 .d3AlphaDecay(0.01)
                 .d3VelocityDecay(0.01)
@@ -186,17 +140,7 @@
                 .iterations(100)
                 .strength(1)
 
-
-            Graph.backgroundColor('#DCDCDC');
-
-        //     window.onclick = function (event) {
-        //     console.log(Graph.cameraPosition())
-        // }
-
-
         });
-
-        
     </script>
 
 </head>
