@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
-<!-- Copyright 2011 Jason Davies https://github.com/jasondavies/newick.js -->
 
 <head>
     <style>
@@ -10,6 +9,7 @@
     </style>
     <script>
         // parse Newick format phylogeny source file
+        // adapted from https://github.com/jasondavies/newick.js and https://gist.github.com/git-ashish/3aa81521f96e48198c80b4e2742bb6bc
         function parseNewick(a) {
             for (var e = [], r = {}, s = a.split(/\s*(;|\(|\)|,|:)\s*/), t = 0; t < s.length; t++) {
                 var n = s[t];
@@ -60,56 +60,72 @@
 
             // color descendent nodes of each of three main domains of life. Ie Bacteria, Eukarya and Archaea. 
             root.children[1].each(function (d) {
-                d.myColor = "#003f5c";
+                d.color = "#003f5c";
             });
 
             root.children[0].children[1].each(function (d) {
-                d.myColor = "#bc5090";
+                d.color = "#bc5090";
             });
 
             root.children[0].children[0].each(function (d) {
-                d.myColor = "#58508d";
+                d.color = "#58508d";
             });
 
             // convert d3 hierarchy data structure to list of links and list of nodes
-            linksList = [];
-            nodesList = [];
+            var links = [];
+            var nodes = [];
+
+            // func for adding only unique objects to array 
+            function addUnique(object, array) {
+                if (object) {
+                    if (array.filter(x => x.id === object.id).length === 0) {
+                        array.push(object)
+                    }
+                }
+            }
 
             root.links().forEach(function (value) {
                 var source = value.source.data.name;
-                var sourceColor = (value.source.myColor ? value.source.myColor : "#707070");
+                var sourceColor = (value.source.color ? value.source.color : "#707070");
                 var target = value.target.data.name;
-                var targetColor = value.target.myColor;
+                var targetColor = value.target.color;
                 var length = value.target.data.length;
 
-                linksList.push({
+                links.push({
                     source: source,
                     target: target,
                     length: length,
-                    myColor: sourceColor
+                    color: sourceColor
                 });
 
-                nodesList.push({
+                // add only unique nodes to node list from link list 
+                addUnique({
                     id: source,
-                    myColor: sourceColor
-                });
+                    color: sourceColor
+                }, nodes);
 
-                nodesList.push({
+                addUnique({
                     id: target,
-                    myColor: targetColor
-                });
+                    color: targetColor
+                }, nodes);
 
             });
 
-            //remove duplicate nodes from nodes list
-            uniqueArray = a => [...new Set(a.map(o => JSON.stringify(o)))].map(s => JSON.parse(s))
-            uniqueNodes = uniqueArray(nodesList);
-
-            // prep data for pass into graph
+            // create object combining node and link info 
             const gData = {
-                nodes: uniqueNodes,
-                links: linksList
+                nodes: nodes,
+                links: links
             };
+
+            // spherical coordinates for camera position 
+            var r = 2600;
+            var theta = 253;
+            var phi = 20;
+
+            // convert spherical coordinates for camera position to cartesian coordinates
+            var camX = r * Math.sin(phi / 180 * Math.PI) * Math.cos(theta / 180 * Math.PI);
+            var camY = r * Math.sin(phi / 180 * Math.PI) * Math.sin(theta / 180 * Math.PI);
+            var camZ = r * Math.cos(phi / 180 * Math.PI);
 
             // create graph and set attributes
             const Graph = ForceGraph3D()
@@ -117,29 +133,29 @@
                 .nodeLabel(d =>
                     `<span style="color: #505050; background-color: #FFFFFF">${d.id.replace(/\d+/g, '').replace(/_/g, ' ')}</span>`
                 )
-                .nodeColor(node => node.myColor)
-                .linkColor(link => link.myColor)
+                .nodeColor(node => node.color)
+                .linkColor(link => link.color)
                 .linkOpacity(0.5)
                 .linkWidth(1.5)
                 .nodeRelSize(5)
                 .graphData(gData)
                 .backgroundColor('#DCDCDC')
+                .warmupTicks(600)
+                .cooldownTicks(200)
                 .cameraPosition({
-                    x: 500,
-                    y: -300,
-                    z: 3300
-                }
-                )
+                    x: camX,
+                    y: camY,
+                    z: camZ
+                })
 
             // set forces on graph 
             const linkForce = Graph
-                .d3AlphaDecay(0.01)
-                .d3VelocityDecay(0.01)
+                .d3AlphaDecay(0.015)
+                .d3VelocityDecay(0.015)
                 .d3Force('link')
                 .distance(link => link.length * 800)
-                .iterations(100)
+                .iterations(50)
                 .strength(1)
-
         });
     </script>
 
